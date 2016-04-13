@@ -1,42 +1,19 @@
 var net = require('net');
+var handler = require('./handler.js');
 
-var handlers = {'active checks': function(){
-        return {
-            "response":"success",
-            "data":[
-            {
-                "key":"log[\/home\/zabbix\/logs\/zabbix_agentd.log]",
-                "delay":"30",
-                "lastlogsize":"0"
-            },
-            {
-                "key":"agent.version",
-                "delay":"600"
-            }
-            ]
-        } ;
-    },
-    'agent data': function(){
-        return {
-            "response":"success",
-            "info":"Processed 2 Failed 0 Total 2 Seconds spent 0.002070"
-        };
-    }
-};
 
 net.createServer(function(socket){
     socket.name = socket.removeAddress+":"+socket.remotePort
     //var buffer= new Buffer(2048);
 
     socket.on('data', function(data){
-        console.log(data);
         //buffer.write(data);
         if( data.length > 4){
+            console.log('payload:'+data);
             var payload = parse(data);
-            console.log('payload:'+payload);
             if (payload){
                 console.log(payload.request);
-                resp = handlers[payload.request]();
+                resp = handler.get(payload.request)(payload);
                 response(socket, resp );           
             }
             socket.destroy();
