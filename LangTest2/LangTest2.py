@@ -1,6 +1,7 @@
 import socket
 import struct
 import json
+import sys
 
 zserver='localhost'
 zport=10051
@@ -45,7 +46,7 @@ agent_data={'request':'agent data',
         }
 ]
 }
-active_checks_resp = send(active_checks)
-print 'active_checks:',active_checks_resp
+#active_checks_resp = send(active_checks)
+#print 'active_checks:',active_checks_resp
 agent_data_resp = send(agent_data)
 print 'agent_data: ',agent_data_resp
