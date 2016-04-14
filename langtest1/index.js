@@ -4,14 +4,15 @@ var handler = require('./handler.js');
 net.createServer(function(socket){
     socket.name = socket.removeAddress+":"+socket.remotePort
     socket.bufs= [];
+    socket.idx = 0;
     //var buffer= new Buffer(2048);
 
     socket.on('data', function(data){
-        socket.bufs.push(data);
-        var data_length = 0;
-        socket.bufs.forEach(function(buf){data_length += buf.length;});
-        if( data_length > 13){
-            console.log('data_length:'+data_length);
+        var newbuf = new Buffer(data.length);
+        data.copy(newbuf);
+        socket.bufs.push(newbuf);
+        socket.idx += data.length;
+        if( socket.idx > 13){
             var payload = parse(socket, function(payload){
                 console.log(payload.request);
                 handler.get(payload.request)(payload, function(resp){
@@ -27,9 +28,7 @@ net.createServer(function(socket){
 
     function parse(socket, callback){
         var bufs = socket.bufs;
-        console.log('parse step -1');
         if(!socket.payload_length){
-        console.log('parse step -2');
             var header=[];
             var header_byte_count = 0;
             var buffer_count=0;
@@ -44,7 +43,6 @@ net.createServer(function(socket){
                 }
             }
             
-        console.log('parse step -3');
             if (String.fromCharCode(header[0]) == 'Z' &&
                 String.fromCharCode(header[1]) == 'B' &&
                 String.fromCharCode(header[2]) == 'X' &&
@@ -68,10 +66,7 @@ net.createServer(function(socket){
         }
         console.log('parse step -6');
         var payload_length = socket.payload_length;
-        var until_now = -13;
-        bufs.forEach(function(buf){
-            until_now += buf.length;
-        });
+        var until_now = socket.idx-13;
         console.log('parse step -6.1:'+until_now);
         if (payload_length == until_now){
             console.log('parse step -7');
@@ -92,12 +87,13 @@ net.createServer(function(socket){
                     buffer_count += 1;
                 }
             }       
+            var whead = 0;
             if (buffer_byte_count < bufs[buffer_count].length){
-                buf.write(bufs[buffer_count].toString('utf8', buffer_byte_count-1, bufs[buffer_count].length));
+                whead = buf.write(bufs[buffer_count].toString('utf8', buffer_byte_count-1, bufs[buffer_count].length));
             }
             buffer_count +=1;
             for(var i= buffer_count; i < bufs.length; i+=1){
-                buf.write(bufs[i].toString('utf8'), buf.length);
+                whead += buf.write(bufs[i].toString('utf8'), whead);
                     console.log('parse step -10');
             }
             console.log('parse step -10.1:');
