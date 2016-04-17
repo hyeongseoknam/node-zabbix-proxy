@@ -18,7 +18,7 @@ var handlers = {
             callback( JSON.parse(data) );
         });   
     },
-    'agent data': function(request, callback){
+    'agent data_parse': function(request, callback){
         if (isRedisConnected){
             var samples= request.data;
             var clock = request.clock;
@@ -43,6 +43,13 @@ var handlers = {
                 };
                 callback( resp);
             });
+        }
+
+        return ;
+    },
+    'agent data': function(request, callback){
+        if (isRedisConnected){
+            client.rpush('zabbix_agent_stream', request.rawBody);
         }
 
         return ;

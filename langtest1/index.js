@@ -58,30 +58,23 @@ net.createServer(function(socket){
                 payload_length += header[12]<< 56;
 
                 socket.payload_length = payload_length;
-        console.log('parse step -4:'+payload_length);
             }else{
-                console.log('parse step -5');
                 socket.end();
             }
         }
-        console.log('parse step -6');
         var payload_length = socket.payload_length;
         var until_now = socket.idx-13;
-        console.log('parse step -6.1:'+until_now);
         if (payload_length == until_now){
-            console.log('parse step -7');
             var buf = new Buffer(payload_length);
             var header_byte_count = 0;
             var buffer_count=0;
             var buffer_byte_count=0;
             while(header_byte_count < 14){
-            console.log('parse step -8');
                 var buffer = bufs[buffer_count];
                 buffer_byte_count=0;
                 while ( header_byte_count < 14 && buffer_byte_count < buffer.length ){
                     buffer_byte_count +=1;
                     header_byte_count +=1;
-                    console.log('parse step -9');
                 }
                 if(header_byte_count < 14){
                     buffer_count += 1;
@@ -94,14 +87,10 @@ net.createServer(function(socket){
             buffer_count +=1;
             for(var i= buffer_count; i < bufs.length; i+=1){
                 whead += buf.write(bufs[i].toString('utf8'), whead);
-                    console.log('parse step -10');
             }
-            console.log('parse step -10.1:');
-            console.log(buf.toString('utf-8'));
             var jsonresp = JSON.parse(buf.toString('utf-8'));
             callback(jsonresp);
         }
-                    console.log('parse step -11');
     }
 
     function response(socket, resp){
