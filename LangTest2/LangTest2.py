@@ -24,8 +24,11 @@ def send( mydata):
         return err_message
 
     resp= sock.recv(5)
+    print resp
     data_length = sock.recv(8)
-    data_length= struct.unpack('<Q',data_length )[0]
+    print data_length
+    data_length= struct.unpack('Q',data_length )[0]
+ 
     resp= sock.recv(data_length)
     sock.close()
 
