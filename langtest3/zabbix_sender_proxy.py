@@ -49,8 +49,9 @@ class ZabbixSender(protocol.Protocol):
         return self.__doc
 
     def parse(self, inst):
+        print 'def parse(self, inst):'
         request = self.__doc['request']
-        zrh.getHandler(request)(self)
+        return zrh.getHandler(request)(self)
 
 
     def __parseHeader(self):
@@ -76,6 +77,7 @@ class ZabbixSender(protocol.Protocol):
             "info": "Processed %(items_count)d Failed 0 Total %(items_count)d Seconds spent 0.002070" %dict(items_count=self.__items_count)
         }
         jsonresp = simplejson.dumps(resp)"""
+        #print jsonresp
         self.transport.write('ZBXD\1')
         self.transport.write(struct.pack('Q',len(jsonresp)))
         self.transport.write(jsonresp)

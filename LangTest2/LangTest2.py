@@ -26,9 +26,9 @@ def send( mydata):
     resp= sock.recv(5)
     print resp
     data_length = sock.recv(8)
-    print data_length
+
     data_length= struct.unpack('Q',data_length )[0]
- 
+    print data_length
     resp= sock.recv(data_length)
     sock.close()
 
@@ -49,7 +49,7 @@ agent_data={'request':'agent data',
         }
 ]
 }
-#active_checks_resp = send(active_checks)
-#print 'active_checks:',active_checks_resp
+active_checks_resp = send(active_checks)
+print 'active_checks:',active_checks_resp
 agent_data_resp = send(agent_data)
 print 'agent_data: ',agent_data_resp

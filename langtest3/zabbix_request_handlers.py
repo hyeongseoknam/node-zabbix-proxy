@@ -2,8 +2,9 @@ import simplejson
 
 def __sendActiveChecks(protocol):
     f = open('../langtest1/resp_active_checks.json')
-    active_checks = simplejson.loads(f.read())
+    active_checks = f.read()
     f.close()
+    #print '__sendActiveChecks', active_checks
     return active_checks
 
 def __sendAgentData(protocol):
