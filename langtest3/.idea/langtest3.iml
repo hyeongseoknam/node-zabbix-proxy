@@ -8,6 +8,7 @@
     <orderEntry type="module" module-name="zabbix-agent-stress-test" />
     <orderEntry type="module" module-name="langtest4" />
     <orderEntry type="module" module-name="langtest5" />
+    <orderEntry type="module" module-name="langtest7" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />
